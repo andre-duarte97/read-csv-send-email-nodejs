@@ -1,0 +1,14 @@
+# Dependency directories
+node_modules/
+dist/
+jspm_packages/
+processed-files/
+pending-files/
+return-files/
+template/
+
+# dotenv environment variables file
+.env
+.env.test
+.env.dev
+.env.prod
