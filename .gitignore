@@ -5,7 +5,6 @@ jspm_packages/
 processed-files/
 pending-files/
 return-files/
-template/
 
 # dotenv environment variables file
 .env
