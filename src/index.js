@@ -42,8 +42,8 @@ async function readCSV() {
           .on('data', async (row) => {
             newRows.push({
                 email: row.EMAIL,
-                nome: row.NOME,
-                assunto: row.ASSUNTO
+                name: row.NOME,
+                subject: row.ASSUNTO
             })
           })
           .on('end', async () => {
@@ -65,54 +65,56 @@ async function readCSV() {
 async function processContent (rows, filename) {
   const dataReturn = []
   const filenameReturn = filename.split('.csv')[0] + '_ret.csv'
+  let nameFileError = ''
   fsReadyFile(path.resolve(directoryFiles, '..', 'template', 'model_template.html'), 'utf-8').then(async (content) => {
     rows.map(async (row) => {
-      let { nome, email, assunto } = row
-      let conteudo = content.toString()
+      let { name, email, subject } = row
+      content = content.toString()
 
       const id = uuidv4() // uuid generate
-      nome = nome ? String(nome) : 'Anônimo'
-      assunto = assunto ? String(assunto) : ''
+      name = name ? String(name) : 'Anônimo'
+      subject = subject ? String(subject) : ''
 
       const dateSend = formatDatePtBr(new Date())
 
-      conteudo = conteudo.replace(/\[nome\]/g, nome)
-      conteudo = conteudo.replace(/\[email\]/g, email)
-      conteudo = conteudo.replace(/\[assunto\]/g, assunto)
-      conteudo = conteudo.replace(/\[data_atual\]/g, dateSend)
+      content = content.replace(/\[nome\]/g, name)
+      content = content.replace(/\[email\]/g, email)
+      content = content.replace(/\[assunto\]/g, subject)
+      content = content.replace(/\[data_atual\]/g, dateSend)
 
-      const nameFileError = filename.split('.csv')[0] + '_error_ret.csv'
+      const emailValid = email && formatString.validaEmail(email) ? 'Válido' : 'Inválido'
 
       dataReturn.push({
         id,
-        nome,
+        name,
         email,
-        assunto,
-        dataEnvio: dateSend,
+        subject,
+        dateSend,
+        emailValid
       })
 
       const dataSendEmail = {
-        nome,
+        name,
         email,
-        assunto,
-        conteudo,
+        subject,
+        content,
       }
 
       try {
-        if (!formatString.validaEmail(email)) {
-          dataReturn.push({emailValido: false})
-          console.log(`email: ${email} invalid or does not exist into file: ${filename}`)
-          return
+        if (emailValid === 'Válido') {
+          const responseEmail = await sendEmail(dataSendEmail)
+          console.log(responseEmail)
         }
-
-        dataReturn.push({emailValido: true})
-        const responseEmail = await sendEmail(dataSendEmail)
-        console.log(responseEmail)
       } catch (error) {
-        await retornoCSV(dataReturn, nameFileError)
+        nameFileError = filename.split('.csv')[0] + '_error_ret.csv'
         console.error(`Has been error to send email: ${error}`)
+        return
       }
     })
+    if (nameFileError !== '') {
+      await retornoCSV(dataReturn, nameFileError)
+      return
+    }
     await retornoCSV(dataReturn, filenameReturn)
   })
     .catch(error => console.log(`An error has occurred: ${error}`))
@@ -129,8 +131,8 @@ async function retornoCSV (dataReturn, filename) {
       { id: 'nome', title: 'NOME' },
       { id: 'email', title: 'EMAIL' },
       { id: 'assunto', title: 'ASSUNTO' },
-      { id: 'dataEnvio', title: 'DATA_ENVIO'},
-      { id: 'emailValido', title: 'EMAIL_VALIDO'}
+      { id: 'data_envio', title: 'DATA_ENVIO'},
+      { id: 'email_valido', title: 'EMAIL_VALIDO'}
     ]
 
     const csvWriter = createObjectCsvWriter({
@@ -140,23 +142,14 @@ async function retornoCSV (dataReturn, filename) {
       headerIdDelimiter: ';'
     })
 
-    const promiseRecords = dataReturn.map(data => {
-      const {
-        id = data.id,
-        nome = data.nome,
-        email = data.email,
-        assunto = data.assunto,
-        dataEnvio = data.dataEnvio,
-        emailValido = data.emailValido
-      } = dataReturn
-
+    const promiseRecords = dataReturn.map(async (data )=> {
       return {
-        id,
-        nome,
-        email,
-        assunto,
-        dataEnvio,
-        emailValido
+        id:  data.id,
+        nome: data.name,
+        email: data.email,
+        assunto: data.subject,
+        data_envio: data.dateSend,
+        email_valido: data.emailValid
       }
     })
 

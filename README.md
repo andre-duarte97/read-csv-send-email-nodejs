@@ -16,7 +16,7 @@ OBS: Se dê algum erro no envio ou se o e-mail for inválido, ele vai gerar um a
 ## Premissas
 
 - Só funciona com arquivos .csv e no formato UTF-8, separado por ;
-- Você terá que setar as configurações de uma conta de e-mail para fazer o envio de e-mails e adicionar as credenciais (Host, Porta, User e Pass) no arquivo .env na raiz do projeto, nesse projeto eu utilizei uma conta de teste gratuita do https://mailtrap.io/, acesse e faça um cadastro ou uma adicione uma própria se desejar.
+- Você terá que setar as configurações de uma conta de e-mail para fazer o envio de e-mails e adicionar as credenciais (Host, Porta, User e Pass) no arquivo .env na raiz do projeto. Nesse projeto eu utilizei a minha conta do Gmail somente para fins de testes, mas para isso é necesário desabilitar a função "Acesso a app menos seguro" nas configurações de segurança da sua conta ou adicione uma outra conta se desejar.
 
 
 ## Regras de Negócio

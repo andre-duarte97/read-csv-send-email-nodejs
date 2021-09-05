@@ -14,19 +14,18 @@ const transporter = nodemailer.createTransport({
 })
 
 async function sendEmail(dataSend) {
-    try {
-        const mailSent = await transporter.sendMail({
-            from: user,
-            to: dataSend.email,
-            subject: dataSend.assunto,
-            html: dataSend.conteudo    
-        })
-
-        if (mailSent) {
+    if (dataSend) {
+        try {
+            const mailSent = await transporter.sendMail({
+                from: user,
+                to: dataSend.email,
+                subject: dataSend.subject,
+                html: dataSend.content    
+            })
             return mailSent
-        }
-    } catch (error) {
-        return error
+        } catch (error) {
+            return error
+        }       
     }
 }
 
