@@ -4,7 +4,8 @@
 -  O Diretório dos arquivos a serem processados devem estar na pasta "pending-files" na raíz do projeto.
 - O template a ser enviado por e-mail deve está na pasta "template" (deixei disponibilizado um arquivo para teste, mas pode usar qualquer outro) na raíz do projeto e deve ser um arquivo .HTML. No .HTML as variáveis [NOME], [EMAIL] e [ASSUNTO] devem estar entre colchetes no arquivo para ser substituído no processamento (Não é obrigatório).
 - Deverá existir uma pasta com nome "processed-files" na raíz do projeto para os arquivos já processados".
-- Deverá existir uma pasta "return-files" para os arquivos de retornos.
+ Deverá existir uma pasta "processed-files" para os arquivos .csv serem movidos após serem processados.
+- Deverá existir uma pasta "return-files" para os arquivos de retornos serem gerados.
 
 ## Como rodar a aplicação
 
